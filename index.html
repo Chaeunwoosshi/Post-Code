@@ -50,7 +50,7 @@
 
 body {
       margin: 0;
-      padding: 10px;
+      padding: 20px 5px;
       font-family: Arial, sans-serif;
       background-color: var(--background-color);
       color: var(--text-color);
@@ -63,7 +63,7 @@ body {
 .toggle-container {
   position: fixed;
   top: 10px;
-  right: 10px;
+  right: 20px;
   display: flex;
   align-items: center;
 }
@@ -73,8 +73,9 @@ body {
   padding: 5px 10px;
   border: 1px solid gray;
   border-radius: 5px;
-  background-color: gray;
-  color: white;
+  background-color: var(--placeholder-bg);
+  color: var(--text-color);
+  font-size:10px;
 }
 
 select {
@@ -147,7 +148,7 @@ textarea:hover, input[type="text"]:hover {
 
 .input-container {
   position: relative;
-  margin-bottom: 15px;
+
 }
 
 @media screen and (max-width: 600px) {
@@ -162,6 +163,7 @@ textarea:hover, input[type="text"]:hover {
   }
 
   textarea {
+    margin:0;
     height: 150px; /* Larger text area on desktop */
   }
 }
@@ -263,7 +265,7 @@ body.dark-mode ::placeholder {
 <body>
 
    <div class="toggle-container">
-    <button id="toggleMode" class="toggle-switch" onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
+    <button id="toggleMode" class="toggle-switch" onclick="toggleDarkMode()">Light/Dark</button>
     <i id="light-icon" class="fas fa-sun" style="display: none;"></i>
     <i id="dark-icon" class="fas fa-moon"></i>
 </div>
