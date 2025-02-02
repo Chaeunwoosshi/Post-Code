@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABEFilm - Movie & Series Code Generator</title>
+  
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+     
+
+  /* CSS styles */
+    :root {
+      --background-color: #f1f1f1;
+      --menu-colorbg:#e1e1e1 ;
+      --theme-color:#0d7e2e;
+      --text-color: #5a5a5a;
+      --button-background-color: #17c349e3;
+      --button-text-color: #fff;
+      --table-border-color: #ccc;
+      --table-header-color: #f2f2f2;
+      --placeholder-bg: #a6a9a60a;
+      --ep-color: #424242;
+      --eph2-color: #17c349e3;
+      --toggle-icon:crimson;
+      --active-color:#17c349e3;
+      --dropdownbg-color:#e7ebec;
+      --border-color:#e3e3e3;
+      --copy-color:#c2c2c2;
+    }
+
+    /* Dark mode */
+    body.dark-mode {
+      --background-color: #171c28;
+      --theme-color:#12d24a;
+      --menu-colorbg:#191e2a;
+      --text-color: #cecece;
+      --button-background-color: #0056b3;
+      --table-border-color: #666;
+      --table-header-color: #444;
+      --placeholder-bg: #2d3b4d3b;
+      --ep-color: #cdcdcd;
+      --eph2-color: #00bfffbe;
+      --active-color:#0faf3d;
+      --toggle-icon:#1188b0;
+      --dropdownbg-color:#181d23;
+      --border-color:#272727;
+      --copy-color:#4c4c4c;
+    }
+
+body {
+      margin: 0;
+      padding: 30px;
+      font-family: Arial, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+    
+.toggle-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-switch {
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  background-color: gray;
+  color: white;
+}
+
+select {
+  outline: none !important;
+}
+
+.dark-mode #dropdown {
+  color: white;
+}
+
+.container {
+  max-width: 50%;
+  color: var(--text-dark);
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.myinputs {
+  margin: 20px;
+  text-align: center;
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  box-sizing: border-box;
+  color: var(--text-dark);
+  background-color: var(--placeholder-bg);
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+textarea {
+  height: 100px;
+  resize: vertical;
+  display: block;
+}
+
+textarea:hover, input[type="text"]:hover {
+  animation: borderRotate 2s linear infinite;
+  border-image-source: linear-gradient(90deg, transparent, #ff0000, transparent);
+  border-image-slice: 1;
+}
+
+@keyframes borderRotate {
+  0% { border-image-source: linear-gradient(90deg, transparent, #ff009670, transparent); }
+  25% { border-image-source: linear-gradient(180deg, transparent, #00ff0076, transparent); }
+  50% { border-image-source: linear-gradient(270deg, transparent, #00a8ff7d, transparent); }
+  75% { border-image-source: linear-gradient(360deg, transparent, #ffff0082, transparent); }
+  100% { border-image-source: linear-gradient(90deg, transparent, #ff0000, transparent); }
+}
+
+#copyBtn, #generateBtn, .removeBtn, #copyBtn3, #generateBtn3, #addEpisodeBtn, #removeTableBtn {
+  display: block;
+  margin: 15px auto;
+  border-radius: 8px;
+  padding: 10px 20px;
+  background-color: var(--placeholder-bg);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  color: var(--theme-color);
+  border: none;
+  cursor: pointer;
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 600px) {
+  .input-container {
+    height: 300px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  input[type="text"], textarea {
+    height: 50px; /* Increase height for desktop */
+  }
+
+  textarea {
+    height: 150px; /* Larger text area on desktop */
+  }
+}
+
+
+.error-indicator {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 20%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  background-color: red;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+}
+
+input:invalid + .error-indicator,
+textarea:invalid + .error-indicator {
+  display: block;
+}
+
+.dark-mode-label, .light-mode-label {
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+/* Focus effects */
+input:focus, textarea:focus {
+  outline-color: var(--theme-color) !important;
+}
+
+.dark-mode input:focus, .dark-mode textarea:focus {
+  outline-color: var(--theme-color) !important;
+}
+
+/* Placeholder text color */
+::placeholder {
+  opacity: 0.7;
+  color: var(--placeholder-color-light);
+}
+
+body.dark-mode ::placeholder {
+  opacity: 0.7;
+  color: var(--placeholder-color-dark);
+}
+
+/* Dropdown menu */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  border: 1px solid rgba(235, 235, 235, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  background-color: var(--placeholder-bg);
+  color: var(--theme-color);
+  margin-left: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--dropdownbg-color);
+  color: var(--theme-color);
+  min-width: 160px;
+  margin: 10px 0 0 20px;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.dropdown-content button {
+  background: none;
+  color: grey;
+  border: none;
+  padding: 6px 10px;
+  text-align: left;
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
+.dropdown-content button:hover {
+  background-color: #f1f1f1;
+}
+
+.show {
+  display: block;
+}
+
+    </style>
+</head>
+<body>
+
+   <div class="toggle-container">
+    <button id="toggleMode" class="toggle-switch" onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
+    <i id="light-icon" class="fas fa-sun" style="display: none;"></i>
+    <i id="dark-icon" class="fas fa-moon"></i>
+</div>
+
+   <div class="dropdown">
+  <button onclick="toggleDropdown()" class="dropbtn" id="dropdownTitle"><i class="fas fa-tv">Series Code </i>
+</button>
+  <div id="myDropdown" class="dropdown-content">
+    <button id="movieOption" onclick="selectOption('movieCode')" style="display: none;"><i class="fas fa-film"> Movie Code </i>
+</button>
+    <button id="postOption" onclick="selectOption('seriesCode')"> <i class="fas fa-tv"> Series Code </i>
+</button>
+    
+  </div>
+</div>
+<div id="seriesCode" class="tabcontent">
+  <!-- Content for Series Code -->
+   <div class="myinputs">
+     <input type="text" id="seriesThumbnailInput3" placeholder="Enter Thumbnail Link">
+  <label for="synopsisInput"></label>
+  <textarea id="synopsisInput3" placeholder="Enter Synopsis"></textarea>
+        <input type="text" id="castsInput3" placeholder="Enter Cast(s)">
+        
+        <input type="text" id="directorInput3" placeholder="Enter Director(s)">
+        <input type="text" id="releaseInput3" placeholder="Enter Release Date">
+        <input type="text" id="countryInput3" placeholder="Enter Country">
+        
+        <div id="episodes">
+            <div class="episode">
+                <input type="text" class="episodeInput" placeholder="Enter Episode 1" style="removeBtn:display:none!important;">
+                <button class="removeBtn">Remove</button>
+            </div>
+        </div>
+        
+        <button id="addEpisodeBtn">Add Episode</button>
+        <button id="generateBtn3">Generate Code</button>
+       <button id="copyBtn3">Copy</button>
+        <textarea id="codeOutput3" readonly></textarea>
+
+    </div>
+</div>
+<div id="movieCode" class="tabcontent">
+  <!-- Content for Movie Code -->
+
+     <div class="myinputs">
+ <label for="thumbnailInput"></label>
+  <input type="text" id="thumbnailInput" placeholder="Enter Thumbnail Link">
+  
+  <label for="iframeInput"></label>
+  <input type="text" id="iframeInput" placeholder="Enter IFrame Embed Link">
+ 
+  <label for="synopsisInput"></label>
+  <textarea id="synopsisInput" placeholder="Synopsis"></textarea>
+  
+  <button id="removeTableBtn">Remove Table</button>
+  
+  <label for="castsInput"></label>
+  <input type="text" id="castsInput" placeholder="Enter Cast(s)">
+  
+  <label for="directorInput"></label>
+  <input type="text" id="directorInput" placeholder="Enter Director(s)">
+  
+  <label for="releaseInput"></label>
+  <input type="text" id="releaseInput" placeholder="Enter Release Date">
+  
+  <label for="countryInput"></label>
+  <input type="text" id="countryInput" placeholder="Enter Country">
+  
+  
+  <button id="generateBtn">Generate Code</button>
+  <button id="copyBtn">Copy</button>
+  <textarea id="codeOutput" rows="10"></textarea>
+ 
+</div>
+</div>
+
+    <script>
+    
+ const lightIcon = document.getElementById("dark-icon");
+const darkIcon = document.getElementById("light-icon");
+// Check if dark mode is preferred
+const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+let darkMode = darkModeMediaQuery.matches;
+
+// Set dark-mode class on body if darkMode is true and pick icon
+if (darkMode) {
+  document.body.classList.add("dark-mode");
+  darkIcon.style.display = "none";
+} else {
+  lightIcon.style.display = "none";
+}
+// Toggle dark mode on button click
+function toggleDarkMode() {
+  // Toggle darkMode variable
+  darkMode = !darkMode;
+
+  // Toggle dark-mode class on body
+  document.body.classList.toggle("dark-mode");
+
+  // Toggle light and dark icons
+  if (darkMode) {
+    lightIcon.style.display = "block";
+    darkIcon.style.display = "none";
+  } else {
+    lightIcon.style.display = "none";
+    darkIcon.style.display = "block";
+  }
+}
+
+
+
+// JavaScript for Movie Generator
+
+// DOMContentLoaded Event Listener
+document.addEventListener("DOMContentLoaded", function() {
+  // Flag to track whether to include the table
+  var includeTable = true;
+
+  // Generate Code Button Click Event
+  document.getElementById('generateBtn').addEventListener('click', function() {
+    // Retrieve input values
+    var thumbnailLink = document.getElementById('thumbnailInput').value;
+    var iframeLink = document.getElementById('iframeInput').value;
+    var synopsis = document.getElementById('synopsisInput').value;
+    var casts = document.getElementById('castsInput').value;
+    var director = document.getElementById('directorInput').value;
+    var release = document.getElementById('releaseInput').value;
+    var country = document.getElementById('countryInput').value;
+
+    // Create table structure if needed
+    var tableCode = '';
+    if (includeTable) {
+      tableCode = '<table class="blueTable">\n<tbody>\n' +
+        '<tr>\n<td>Casts:</td>\n<td>' + casts + '</td>\n</tr>\n' +
+        '<tr>\n<td>Director:</td>\n<td>' + director + '</td>\n</tr>\n' +
+        '<tr>\n<td>Release:</td>\n<td>' + release + '</td>\n</tr>\n' +
+        '<tr>\n<td>Country:</td>\n<td>' + country + '</td>\n</tr>\n' +
+        '</tbody>\n</table>';
+    }
+
+    // Generate HTML code
+    var generatedCode = '<html>\n' +
+      '<img src="' + thumbnailLink + '"/>\n' +
+      '<iframe id="fullscreen-Button" class="lazyload" data-src="' + iframeLink + '" src="' + iframeLink + '" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>\n' +
+      '<p>' + synopsis + '</p>\n' +
+      tableCode + '\n\n' +
+      '<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>\n' +  // Always include this button
+      '</html>';
+
+    // Display generated code in the textarea
+    document.getElementById('codeOutput').value = generatedCode;
+  });
+
+  // Copy Button Click Event
+  document.getElementById('copyBtn').addEventListener('click', function() {
+    var codeOutput = document.getElementById('codeOutput');
+    codeOutput.select();
+    document.execCommand('copy');
+    alert('Code copied to clipboard!');
+  });
+
+  // Remove Table Button Click Event
+  document.getElementById('removeTableBtn').addEventListener('click', function() {
+    // Toggle the includeTable flag to exclude or include the table
+    includeTable = !includeTable;
+    alert('Table ' + (includeTable ? 'included' : 'removed') + ' from code generation.');
+  });
+});
+
+//Series Code Generator
+
+
+// Add Episode Button Click Event
+document.getElementById('addEpisodeBtn').addEventListener('click', function() {
+  var episodesDiv = document.getElementById('episodes');
+  var episodeDiv = document.createElement('div');
+  episodeDiv.classList.add('episode');
+
+  // Create episode input field and remove button
+  var episodeCount = document.querySelectorAll('.episode').length + 1;
+  var episodeInput = document.createElement('input');
+  episodeInput.type = 'text';
+  episodeInput.classList.add('episodeInput');
+  episodeInput.placeholder = 'Enter Episode ' + episodeCount;
+
+  var removeBtn = document.createElement('button');
+  removeBtn.textContent = 'Remove';
+  removeBtn.classList.add('removeBtn');
+
+  // Remove Episode Button Click Event
+  removeBtn.addEventListener('click', function() {
+    episodesDiv.removeChild(episodeDiv);
+  });
+
+  // Append episode input and remove button to episode div
+  episodeDiv.appendChild(episodeInput);
+  episodeDiv.appendChild(removeBtn);
+  episodesDiv.appendChild(episodeDiv);
+});
+
+// Generate Series Code Button Click Event
+document.getElementById('generateBtn3').addEventListener('click', function() {
+  // Retrieve input values
+  var seriesThumbnail = document.getElementById('seriesThumbnailInput3').value;
+  var casts = document.getElementById('castsInput3').value;
+  var director = document.getElementById('directorInput3').value;
+  var releaseDate = document.getElementById('releaseInput3').value;
+  var country = document.getElementById('countryInput3').value;
+  var synopsis = document.getElementById('synopsisInput3').value;
+
+  // Generate episode links
+  var episodes = document.querySelectorAll('.episodeInput');
+  var episodeList = '';
+  episodes.forEach(function(episode, index) {
+    episodeList += '<a href="" class="epi" data-src="' + episode.value + '">' + (index + 1) + '</a>';
+  });
+
+  // Create table structure
+  var tableCode = '<table class="blueTable">\n<tbody>\n' +
+    '<tr>\n<td>Casts:</td>\n<td>' + casts + '</td>\n</tr>\n' +
+    '<tr>\n<td>Director:</td>\n<td>' + director + '</td>\n</tr>\n' +
+    '<tr>\n<td>Release Date:</td>\n<td>' + releaseDate + '</td>\n</tr>\n' +
+    '<tr>\n<td>Country:</td>\n<td>' + country + '</td>\n</tr>\n' +
+    '</tbody>\n</table>';
+
+  // Generate HTML code
+  var generatedCode = '<html>\n' +
+    '<iframe class="lazyload" data-src="/" src="/" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>\n' +
+    '<img src="' + seriesThumbnail + '"/>\n' +
+    '<p>' + synopsis + '</p>\n' +
+    tableCode + '\n' +
+    '<div id="episodeList">' + episodeList + '</div>\n' +
+    '</html>';
+
+  // Display generated code in the textarea
+  document.getElementById('codeOutput3').value = generatedCode;
+});
+
+// Copy Series Code Button Click Event
+document.getElementById('copyBtn3').addEventListener('click', function() {
+  var codeOutput = document.getElementById('codeOutput3');
+  codeOutput.select();
+  document.execCommand('copy');
+  alert('Code copied to clipboard!');
+});
+
+
+
+
+// Dropdown Toggle
+function toggleDropdown() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Dropdown Selection
+function selectOption(option) {
+  document.getElementById("myDropdown").classList.remove("show");
+  if (option === "seriesCode") {
+    document.getElementById("seriesCode").style.display = "block";
+    document.getElementById("movieCode").style.display = "none";
+    document.getElementById("dropdownTitle").innerHTML = 'Series Code <i class="fas fa-caret-down"></i>';
+    document.getElementById("postOption").style.display = "none";
+    document.getElementById("movieOption").style.display = "block";
+  } else if (option === "movieCode") {
+    document.getElementById("seriesCode").style.display = "none";
+    document.getElementById("movieCode").style.display = "block";
+    document.getElementById("dropdownTitle").innerHTML = 'Movie Code <i class="fas fa-caret-down"></i>';
+    document.getElementById("movieOption").style.display = "none";
+    document.getElementById("postOption").style.display = "block";
+  }
+}
+
+// Set default content to "Post Code"
+selectOption("seriesCode");
+
+      
+      
+  
+// Validation for Movie and Series input fields
+function validateInput(input, regex) {
+  const value = input.value.trim();
+  return regex.test(value);
+}
+
+function toggleErrorIndicator(input, isValid) {
+  let errorIndicator = input.parentNode.querySelector(".error-indicator"); // Look for the indicator within the input container
+  if (!errorIndicator) {
+    // If indicator doesn't exist, create it
+    errorIndicator = document.createElement("div");
+    errorIndicator.className = "error-indicator";
+    input.parentNode.appendChild(errorIndicator); // Add the indicator as the last child of the container
+  }
+
+  // Toggle visibility based on validation
+  errorIndicator.style.display = isValid ? "none" : "block";
+}
+
+// List of input IDs and their validation patterns
+const inputsToValidate = [
+  {
+    inputId: "seriesThumbnailInput3",
+    regex: /\.(jpg|jpeg|png|gif|webp)$/i, // For image links
+  },
+  {
+    inputId: "thumbnailInput",
+    regex: /\.(jpg|jpeg|png|gif|webp)$/i, // For image links
+  },
+  {
+    inputId: "iframeInput",
+    regex: /^https?:\/\//, // For valid URLs
+  },
+  {
+    inputId: "releaseInput3",
+    regex: /^(January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}$|^\d{4}$/, // Valid dates like January 13, 2025 or 2025
+  },
+  {
+    inputId: "releaseInput",
+    regex: /^(January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}$|^\d{4}$/, // Valid dates
+  },
+  {
+    inputId: "countryInput3",
+    regex: /^[A-Za-z\s]+$/, // For alphabetic countries
+  },
+  {
+    inputId: "countryInput",
+    regex: /^[A-Za-z\s]+$/, // For alphabetic countries
+  },
+];
+
+inputsToValidate.forEach(({ inputId, regex }) => {
+  const input = document.getElementById(inputId);
+
+  // Wrap input in a container
+  const wrapper = document.createElement("div");
+  wrapper.className = "input-container";
+  input.parentNode.insertBefore(wrapper, input);
+  wrapper.appendChild(input);
+
+  input.addEventListener("input", () => {
+    const isValid = validateInput(input, regex);
+    toggleErrorIndicator(input, isValid);
+  });
+});
+
+    </script>
+
+</body>
+</html>
