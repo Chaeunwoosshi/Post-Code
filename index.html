@@ -7,8 +7,8 @@
   
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-     
-
+  
+        
   /* CSS styles */
     :root {
       --background-color: #fff;
@@ -294,6 +294,7 @@ body.dark-mode ::placeholder {
     <i id="light-icon" class="fas fa-sun" style="display: none;"></i>
     <i id="dark-icon" class="fas fa-moon"></i>
 </div>
+
  <div class="abefilm-container">
         <div class="abefilm-box">
            <div class="postcode">
@@ -322,11 +323,10 @@ body.dark-mode ::placeholder {
         
         <div id="episodes">
             <div class="episode">
-                <input type="text" class="episodeInput videoID" placeholder="Enter Episode 1" style="removeBtn:display:none!important;">
+                <input type="text" class="episodeInput videoID" placeholder="Enter Episode 1" style="removeBtn:display:none!important;" oninput="generateLink()">
                 <button class="removeBtn">Remove</button>
             </div>
         </div>
-        
         <button id="addEpisodeBtn">Add Episode</button>
         <button id="generateBtn3">Generate Code</button>
        <button id="copyBtn3">Copy</button>
@@ -342,7 +342,7 @@ body.dark-mode ::placeholder {
   <input type="text" id="thumbnailInput" placeholder="Enter Thumbnail Link">
   
   <label for="iframeInput"></label>
-  <input type="text" class="videoID" id="iframeInput" placeholder="Enter IFrame Embed Link">
+  <input type="text" class="videoID" id="iframeInput" placeholder="Enter IFrame Embed Link" oninput="generateLink()">
  
   <label for="synopsisInput"></label>
   <textarea id="synopsisInput" placeholder="Synopsis"></textarea>
@@ -377,7 +377,7 @@ body.dark-mode ::placeholder {
         <div class="abefilm-box">
  <iframe src="https://chaeunwoosshi.github.io/image-resizer/"></iframe>
     </div>
-   
+</div>
   <script>
   // Dark Mode Toggle
   const lightIcon = document.getElementById("dark-icon");
@@ -594,17 +594,23 @@ body.dark-mode ::placeholder {
   });
 </script>
 <script>
-    function generateLink() {
-        var input = document.querySelector(".videoID"); // Use class instead of id
-        var value = input.value.trim();
-        var baseUrl = "https://geo.dailymotion.com/player/x15g54.html?video=";
+        function generateLink(event) {
+            var input = event.target; // Get the input field that triggered the event
+            var value = input.value.trim();
+            var baseUrl = "https://geo.dailymotion.com/player/x15g54.html?video=";
 
-        // If input is not a full URL and is likely a video ID, convert it
-        if (!value.startsWith("http") && value.length > 0) {
-            input.value = baseUrl + value;
+            // If input is not a full URL and is likely a video ID, convert it
+            if (!value.startsWith("http") && value.length > 0) {
+                input.value = baseUrl + value;
+            }
         }
-    }
-</script>
 
+        // Attach event listener to all inputs with class "videoID"
+        document.querySelectorAll(".videoID").forEach(input => {
+            input.addEventListener("input", generateLink);
+        });
+    </script>
+    
+    
 </body>
 </html>
