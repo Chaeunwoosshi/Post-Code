@@ -322,7 +322,7 @@ body.dark-mode ::placeholder {
         
         <div id="episodes">
             <div class="episode">
-                <input type="text" class="episodeInput" placeholder="Enter Episode 1" style="removeBtn:display:none!important;">
+                <input type="text" class="episodeInput videoID" placeholder="Enter Episode 1" style="removeBtn:display:none!important;">
                 <button class="removeBtn">Remove</button>
             </div>
         </div>
@@ -342,7 +342,7 @@ body.dark-mode ::placeholder {
   <input type="text" id="thumbnailInput" placeholder="Enter Thumbnail Link">
   
   <label for="iframeInput"></label>
-  <input type="text" id="iframeInput" placeholder="Enter IFrame Embed Link">
+  <input type="text" class="videoID" id="iframeInput" placeholder="Enter IFrame Embed Link">
  
   <label for="synopsisInput"></label>
   <textarea id="synopsisInput" placeholder="Synopsis"></textarea>
@@ -593,7 +593,18 @@ body.dark-mode ::placeholder {
     });
   });
 </script>
+<script>
+    function generateLink() {
+        var input = document.querySelector(".videoID"); // Use class instead of id
+        var value = input.value.trim();
+        var baseUrl = "https://geo.dailymotion.com/player/x15g54.html?video=";
 
+        // If input is not a full URL and is likely a video ID, convert it
+        if (!value.startsWith("http") && value.length > 0) {
+            input.value = baseUrl + value;
+        }
+    }
+</script>
 
 </body>
 </html>
