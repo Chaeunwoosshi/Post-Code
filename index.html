@@ -233,8 +233,7 @@ body.dark-mode ::placeholder {
 }
 
 .dropbtn {
-  border: 1px solid rgba(235, 235, 235, 0.1);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border: 1px solid #ccc;
   background-color: var(--placeholder-bg);
   color: var(--theme-color);
   margin-left: 20px;
@@ -249,6 +248,7 @@ body.dark-mode ::placeholder {
   position: absolute;
   background-color: var(--dropdownbg-color);
   color: var(--theme-color);
+  border: 1px solid #ccc;
   min-width: 160px;
   margin: 10px 0 0 20px;
   border-radius: 5px;
@@ -278,7 +278,11 @@ body.dark-mode ::placeholder {
 </head>
 <body>
 
-  
+   <div class="toggle-container" style="display:none">
+    <button id="toggleMode" class="toggle-switch" onclick="toggleDarkMode()">Light/Dark</button>
+    <i id="light-icon" class="fas fa-sun" style="display: none;"></i>
+    <i id="dark-icon" class="fas fa-moon"></i>
+</div>
  <div class="abefilm-container">
         <div class="abefilm-box">
            <div class="postcode">
