@@ -148,7 +148,7 @@ textarea {
 }
 
 
-#copyBtn, #generateBtn, .removeBtn, #copyBtn3, #generateBtn3, #addEpisodeBtn, #removeTableBtn {
+#copyBtn, #generateBtn, .removeBtn, #copyBtn3, #generateBtn3, #addEpisodeBtn, #removeTableBtn, #removeSynopsisBtn {
   display: block;
   margin: 15px auto;
   border-radius: 5px;
@@ -158,7 +158,18 @@ textarea {
   color: var(--theme-color);
   border: none;
   cursor: pointer;
+  width:auto;
 }
+#buttonContainer {
+  display: flex;
+    justify-content: center; /* Center the buttons horizontally */
+    align-items: center; /* Center the buttons vertically */
+    margin: 0 auto ; /* Center the container itself */
+    gap: 10px; /* Add space between the buttons */
+    width: fit-content; /* Let the container adjust its width based on content */
+    height: 50px; /* Adjust if you want to make sure there's vertical space */
+    margin-bottom:10px;
+  }
 
 .input-container {
   position: relative;
@@ -336,7 +347,11 @@ body.dark-mode ::placeholder {
   <label for="synopsisInput"></label>
   <textarea id="synopsisInput" placeholder="Synopsis"></textarea>
   
-  <button id="removeTableBtn">Remove Table</button>
+  
+<div id="buttonContainer">
+  <button id="removeSynopsisBtn">Remove Synopsis</button>
+  <button id="removeTableBtn">Remove Other Details</button>
+</div>
   
   <label for="castsInput"></label>
   <input type="text" id="castsInput" placeholder="Enter Cast(s)">
@@ -363,275 +378,222 @@ body.dark-mode ::placeholder {
  <iframe src="https://chaeunwoosshi.github.io/image-resizer/"></iframe>
     </div>
    
-    <script>
-    
- const lightIcon = document.getElementById("dark-icon");
-const darkIcon = document.getElementById("light-icon");
-// Check if dark mode is preferred
-const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-let darkMode = darkModeMediaQuery.matches;
+  <script>
+  // Dark Mode Toggle
+  const lightIcon = document.getElementById("dark-icon");
+  const darkIcon = document.getElementById("light-icon");
+  const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  let darkMode = darkModeMediaQuery.matches;
 
-// Set dark-mode class on body if darkMode is true and pick icon
-if (darkMode) {
-  document.body.classList.add("dark-mode");
-  darkIcon.style.display = "none";
-} else {
-  lightIcon.style.display = "none";
-}
-// Toggle dark mode on button click
-function toggleDarkMode() {
-  // Toggle darkMode variable
-  darkMode = !darkMode;
-
-  // Toggle dark-mode class on body
-  document.body.classList.toggle("dark-mode");
-
-  // Toggle light and dark icons
   if (darkMode) {
-    lightIcon.style.display = "block";
+    document.body.classList.add("dark-mode");
     darkIcon.style.display = "none";
   } else {
     lightIcon.style.display = "none";
-    darkIcon.style.display = "block";
   }
-}
 
-
-
-// JavaScript for Movie Generator
-
-// DOMContentLoaded Event Listener
-document.addEventListener("DOMContentLoaded", function() {
-  // Flag to track whether to include the table
-  var includeTable = true;
-
-  // Generate Code Button Click Event
-  document.getElementById('generateBtn').addEventListener('click', function() {
-    // Retrieve input values
-    var thumbnailLink = document.getElementById('thumbnailInput').value;
-    var iframeLink = document.getElementById('iframeInput').value;
-    var synopsis = document.getElementById('synopsisInput').value;
-    var casts = document.getElementById('castsInput').value;
-    var director = document.getElementById('directorInput').value;
-    var release = document.getElementById('releaseInput').value;
-    var country = document.getElementById('countryInput').value;
-
-    // Create table structure if needed
-    var tableCode = '';
-    if (includeTable) {
-      tableCode = '<table class="blueTable">\n<tbody>\n' +
-        '<tr>\n<td>Casts:</td>\n<td>' + casts + '</td>\n</tr>\n' +
-        '<tr>\n<td>Director:</td>\n<td>' + director + '</td>\n</tr>\n' +
-        '<tr>\n<td>Release:</td>\n<td>' + release + '</td>\n</tr>\n' +
-        '<tr>\n<td>Country:</td>\n<td>' + country + '</td>\n</tr>\n' +
-        '</tbody>\n</table>';
+  function toggleDarkMode() {
+    darkMode = !darkMode;
+    document.body.classList.toggle("dark-mode");
+    if (darkMode) {
+      lightIcon.style.display = "block";
+      darkIcon.style.display = "none";
+    } else {
+      lightIcon.style.display = "none";
+      darkIcon.style.display = "block";
     }
+  }
 
-    // Generate HTML code
-    var generatedCode = '<html>\n' +
-      '<img src="' + thumbnailLink + '"/>\n' +
-      '<iframe id="fullscreen-Button" class="lazyload" data-src="' + iframeLink + '" src="' + iframeLink + '" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>\n' +
-      '<p>' + synopsis + '</p>\n' +
-      tableCode + '\n\n' +
-      '<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>\n' +  // Always include this button
-      '</html>';
+  // JavaScript for Movie Generator
+  document.addEventListener("DOMContentLoaded", function() {
+    var includeTable = true;
+    var includeSynopsis = true; // Flag for showing/hiding synopsis
 
-    // Display generated code in the textarea
-    document.getElementById('codeOutput').value = generatedCode;
+    document.getElementById('generateBtn').addEventListener('click', function() {
+      var thumbnailLink = document.getElementById('thumbnailInput').value;
+      var iframeLink = document.getElementById('iframeInput').value;
+      var synopsis = document.getElementById('synopsisInput').value;
+      var casts = document.getElementById('castsInput').value;
+      var director = document.getElementById('directorInput').value;
+      var release = document.getElementById('releaseInput').value;
+      var country = document.getElementById('countryInput').value;
+
+      var tableCode = '';
+      if (includeTable) {
+        tableCode = '<table class="blueTable">\n<tbody>\n' +
+          '<tr>\n<td>Casts:</td>\n<td>' + casts + '</td>\n</tr>\n' +
+          '<tr>\n<td>Director:</td>\n<td>' + director + '</td>\n</tr>\n' +
+          '<tr>\n<td>Release:</td>\n<td>' + release + '</td>\n</tr>\n' +
+          '<tr>\n<td>Country:</td>\n<td>' + country + '</td>\n</tr>\n' +
+          '</tbody>\n</table>';
+      }
+
+      var synopsisCode = '';
+      if (includeSynopsis) {
+        synopsisCode = '<p id="synopsis">' + synopsis + '</p>\n';
+      }
+
+      var generatedCode = '<html>\n' +
+        '<img src="' + thumbnailLink + '"/>\n' +
+        '<iframe id="fullscreen-Button" class="lazyload" data-src="' + iframeLink + '" src="' + iframeLink + '" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>\n' +
+        synopsisCode +  // Add the synopsis code
+        tableCode + '\n\n' +
+        '<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>\n' +
+        '</html>';
+
+      document.getElementById('codeOutput').value = generatedCode;
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', function() {
+      var codeOutput = document.getElementById('codeOutput');
+      codeOutput.select();
+      document.execCommand('copy');
+      alert('Code copied to clipboard!');
+    });
+
+    document.getElementById('removeTableBtn').addEventListener('click', function() {
+      includeTable = !includeTable;
+      alert('Table ' + (includeTable ? 'included' : 'removed') + ' from code generation.');
+    });
+
+    // Remove or add the synopsis
+    document.getElementById('removeSynopsisBtn').addEventListener('click', function() {
+      includeSynopsis = !includeSynopsis;
+      alert('Synopsis ' + (includeSynopsis ? 'included' : 'removed') + ' from code generation.');
+    });
+
   });
 
-  // Copy Button Click Event
-  document.getElementById('copyBtn').addEventListener('click', function() {
-    var codeOutput = document.getElementById('codeOutput');
+  // Series Code Generator
+  document.getElementById('addEpisodeBtn').addEventListener('click', function() {
+    var episodesDiv = document.getElementById('episodes');
+    var episodeDiv = document.createElement('div');
+    episodeDiv.classList.add('episode');
+
+    var episodeCount = document.querySelectorAll('.episode').length + 1;
+    var episodeInput = document.createElement('input');
+    episodeInput.type = 'text';
+    episodeInput.classList.add('episodeInput');
+    episodeInput.placeholder = 'Enter Episode ' + episodeCount;
+
+    var removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.classList.add('removeBtn');
+
+    removeBtn.addEventListener('click', function() {
+      episodesDiv.removeChild(episodeDiv);
+    });
+
+    episodeDiv.appendChild(episodeInput);
+    episodeDiv.appendChild(removeBtn);
+    episodesDiv.appendChild(episodeDiv);
+  });
+
+  document.getElementById('generateBtn3').addEventListener('click', function() {
+    var seriesThumbnail = document.getElementById('seriesThumbnailInput3').value;
+    var casts = document.getElementById('castsInput3').value;
+    var director = document.getElementById('directorInput3').value;
+    var releaseDate = document.getElementById('releaseInput3').value;
+    var country = document.getElementById('countryInput3').value;
+    var synopsis = document.getElementById('synopsisInput3').value;
+
+    var episodes = document.querySelectorAll('.episodeInput');
+    var episodeList = '';
+    episodes.forEach(function(episode, index) {
+      episodeList += '<a href="" class="epi" data-src="' + episode.value + '">' + (index + 1) + '</a>';
+    });
+
+    var tableCode = '<table class="blueTable">\n<tbody>\n' +
+      '<tr>\n<td>Casts:</td>\n<td>' + casts + '</td>\n</tr>\n' +
+      '<tr>\n<td>Director:</td>\n<td>' + director + '</td>\n</tr>\n' +
+      '<tr>\n<td>Release Date:</td>\n<td>' + releaseDate + '</td>\n</tr>\n' +
+      '<tr>\n<td>Country:</td>\n<td>' + country + '</td>\n</tr>\n' +
+      '</tbody>\n</table>';
+
+    var generatedCode = '<html>\n' +
+      '<iframe class="lazyload" data-src="/" src="/" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>\n' +
+      '<img src="' + seriesThumbnail + '"/>\n' +
+      '<p>' + synopsis + '</p>\n' +
+      tableCode + '\n' +
+      '<div id="episodeList">' + episodeList + '</div>\n' +
+      '</html>';
+
+    document.getElementById('codeOutput3').value = generatedCode;
+  });
+
+  document.getElementById('copyBtn3').addEventListener('click', function() {
+    var codeOutput = document.getElementById('codeOutput3');
     codeOutput.select();
     document.execCommand('copy');
     alert('Code copied to clipboard!');
   });
 
-  // Remove Table Button Click Event
-  document.getElementById('removeTableBtn').addEventListener('click', function() {
-    // Toggle the includeTable flag to exclude or include the table
-    includeTable = !includeTable;
-    alert('Table ' + (includeTable ? 'included' : 'removed') + ' from code generation.');
-  });
-});
-
-//Series Code Generator
-
-
-// Add Episode Button Click Event
-document.getElementById('addEpisodeBtn').addEventListener('click', function() {
-  var episodesDiv = document.getElementById('episodes');
-  var episodeDiv = document.createElement('div');
-  episodeDiv.classList.add('episode');
-
-  // Create episode input field and remove button
-  var episodeCount = document.querySelectorAll('.episode').length + 1;
-  var episodeInput = document.createElement('input');
-  episodeInput.type = 'text';
-  episodeInput.classList.add('episodeInput');
-  episodeInput.placeholder = 'Enter Episode ' + episodeCount;
-
-  var removeBtn = document.createElement('button');
-  removeBtn.textContent = 'Remove';
-  removeBtn.classList.add('removeBtn');
-
-  // Remove Episode Button Click Event
-  removeBtn.addEventListener('click', function() {
-    episodesDiv.removeChild(episodeDiv);
-  });
-
-  // Append episode input and remove button to episode div
-  episodeDiv.appendChild(episodeInput);
-  episodeDiv.appendChild(removeBtn);
-  episodesDiv.appendChild(episodeDiv);
-});
-
-// Generate Series Code Button Click Event
-document.getElementById('generateBtn3').addEventListener('click', function() {
-  // Retrieve input values
-  var seriesThumbnail = document.getElementById('seriesThumbnailInput3').value;
-  var casts = document.getElementById('castsInput3').value;
-  var director = document.getElementById('directorInput3').value;
-  var releaseDate = document.getElementById('releaseInput3').value;
-  var country = document.getElementById('countryInput3').value;
-  var synopsis = document.getElementById('synopsisInput3').value;
-
-  // Generate episode links
-  var episodes = document.querySelectorAll('.episodeInput');
-  var episodeList = '';
-  episodes.forEach(function(episode, index) {
-    episodeList += '<a href="" class="epi" data-src="' + episode.value + '">' + (index + 1) + '</a>';
-  });
-
-  // Create table structure
-  var tableCode = '<table class="blueTable">\n<tbody>\n' +
-    '<tr>\n<td>Casts:</td>\n<td>' + casts + '</td>\n</tr>\n' +
-    '<tr>\n<td>Director:</td>\n<td>' + director + '</td>\n</tr>\n' +
-    '<tr>\n<td>Release Date:</td>\n<td>' + releaseDate + '</td>\n</tr>\n' +
-    '<tr>\n<td>Country:</td>\n<td>' + country + '</td>\n</tr>\n' +
-    '</tbody>\n</table>';
-
-  // Generate HTML code
-  var generatedCode = '<html>\n' +
-    '<iframe class="lazyload" data-src="/" src="/" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>\n' +
-    '<img src="' + seriesThumbnail + '"/>\n' +
-    '<p>' + synopsis + '</p>\n' +
-    tableCode + '\n' +
-    '<div id="episodeList">' + episodeList + '</div>\n' +
-    '</html>';
-
-  // Display generated code in the textarea
-  document.getElementById('codeOutput3').value = generatedCode;
-});
-
-// Copy Series Code Button Click Event
-document.getElementById('copyBtn3').addEventListener('click', function() {
-  var codeOutput = document.getElementById('codeOutput3');
-  codeOutput.select();
-  document.execCommand('copy');
-  alert('Code copied to clipboard!');
-});
-
-
-
-
-// Dropdown Toggle
-function toggleDropdown() {
-  document.getElementById("myDropdown").classList.toggle("show");
-}
-
-// Dropdown Selection
-function selectOption(option) {
-  document.getElementById("myDropdown").classList.remove("show");
-  if (option === "seriesCode") {
-    document.getElementById("seriesCode").style.display = "block";
-    document.getElementById("movieCode").style.display = "none";
-    document.getElementById("dropdownTitle").innerHTML = 'Series Code <i class="fas fa-caret-down"></i>';
-    document.getElementById("postOption").style.display = "none";
-    document.getElementById("movieOption").style.display = "block";
-  } else if (option === "movieCode") {
-    document.getElementById("seriesCode").style.display = "none";
-    document.getElementById("movieCode").style.display = "block";
-    document.getElementById("dropdownTitle").innerHTML = 'Movie Code <i class="fas fa-caret-down"></i>';
-    document.getElementById("movieOption").style.display = "none";
-    document.getElementById("postOption").style.display = "block";
-  }
-}
-
-// Set default content to "Post Code"
-selectOption("seriesCode");
-
-      
-      
-  
-// Validation for Movie and Series input fields
-function validateInput(input, regex) {
-  const value = input.value.trim();
-  return regex.test(value);
-}
-
-function toggleErrorIndicator(input, isValid) {
-  let errorIndicator = input.parentNode.querySelector(".error-indicator"); // Look for the indicator within the input container
-  if (!errorIndicator) {
-    // If indicator doesn't exist, create it
-    errorIndicator = document.createElement("div");
-    errorIndicator.className = "error-indicator";
-    input.parentNode.appendChild(errorIndicator); // Add the indicator as the last child of the container
+  function toggleDropdown() {
+    document.getElementById("myDropdown").classList.toggle("show");
   }
 
-  // Toggle visibility based on validation
-  errorIndicator.style.display = isValid ? "none" : "block";
-}
+  function selectOption(option) {
+    document.getElementById("myDropdown").classList.remove("show");
+    if (option === "seriesCode") {
+      document.getElementById("seriesCode").style.display = "block";
+      document.getElementById("movieCode").style.display = "none";
+      document.getElementById("dropdownTitle").innerHTML = 'Series Code <i class="fas fa-caret-down"></i>';
+      document.getElementById("postOption").style.display = "none";
+      document.getElementById("movieOption").style.display = "block";
+    } else if (option === "movieCode") {
+      document.getElementById("seriesCode").style.display = "none";
+      document.getElementById("movieCode").style.display = "block";
+      document.getElementById("dropdownTitle").innerHTML = 'Movie Code <i class="fas fa-caret-down"></i>';
+      document.getElementById("movieOption").style.display = "none";
+      document.getElementById("postOption").style.display = "block";
+    }
+  }
 
-// List of input IDs and their validation patterns
-const inputsToValidate = [
-  {
-    inputId: "seriesThumbnailInput3",
-    regex: /\.(jpg|jpeg|png|gif|webp)$/i, // For image links
-  },
-  {
-    inputId: "thumbnailInput",
-    regex: /\.(jpg|jpeg|png|gif|webp)$/i, // For image links
-  },
-  {
-    inputId: "iframeInput",
-    regex: /^https?:\/\//, // For valid URLs
-  },
-  {
-    inputId: "releaseInput3",
-    regex: /^(January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}$|^\d{4}$/, // Valid dates like January 13, 2025 or 2025
-  },
-  {
-    inputId: "releaseInput",
-    regex: /^(January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4}$|^\d{4}$/, // Valid dates
-  },
-  {
-    inputId: "countryInput3",
-    regex: /^[A-Za-z\s]+$/, // For alphabetic countries
-  },
-  {
-    inputId: "countryInput",
-    regex: /^[A-Za-z\s]+$/, // For alphabetic countries
-  },
-];
+  selectOption("seriesCode");
 
-inputsToValidate.forEach(({ inputId, regex }) => {
-  const input = document.getElementById(inputId);
+  function validateInput(input, regex) {
+    const value = input.value.trim();
+    return regex.test(value);
+  }
 
-  // Wrap input in a container
-  const wrapper = document.createElement("div");
-  wrapper.className = "input-container";
-  input.parentNode.insertBefore(wrapper, input);
-  wrapper.appendChild(input);
+  function toggleErrorIndicator(input, isValid) {
+    let errorIndicator = input.parentNode.querySelector(".error-indicator");
+    if (!errorIndicator) {
+      errorIndicator = document.createElement("div");
+      errorIndicator.className = "error-indicator";
+      input.parentNode.appendChild(errorIndicator);
+    }
+    errorIndicator.style.display = isValid ? "none" : "block";
+  }
 
-  input.addEventListener("input", () => {
-    const isValid = validateInput(input, regex);
-    toggleErrorIndicator(input, isValid);
+  const inputsToValidate = [
+    {
+      inputId: "seriesThumbnailInput3",
+      regex: /\.(jpg|jpeg|png|gif|webp)$/i,
+    },
+    {
+      inputId: "thumbnailInput",
+      regex: /\.(jpg|jpeg|png|gif|webp)$/i,
+    },
+    {
+      inputId: "iframeInput",
+      regex: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
+    },
+    {
+      inputId: "synopsisInput",
+      regex: /^.{10,500}$/,
+    },
+  ];
+
+  inputsToValidate.forEach(function({ inputId, regex }) {
+    const inputElement = document.getElementById(inputId);
+    inputElement.addEventListener("input", function() {
+      const isValid = validateInput(inputElement, regex);
+      toggleErrorIndicator(inputElement, isValid);
+    });
   });
-});
+</script>
 
-    </script>
 
 </body>
 </html>
