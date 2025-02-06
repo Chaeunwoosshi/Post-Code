@@ -11,7 +11,7 @@
 
   /* CSS styles */
     :root {
-      --background-color: #f1f1f1;
+      --background-color: #fff;
       --menu-colorbg:#e1e1e1 ;
       --theme-color:#0d7e2e;
       --text-color: #5a5a5a;
@@ -19,13 +19,13 @@
       --button-text-color: #fff;
       --table-border-color: #ccc;
       --table-header-color: #f2f2f2;
-      --placeholder-bg: #a6a9a60a;
+    
       --ep-color: #424242;
       --eph2-color: #17c349e3;
       --toggle-icon:crimson;
       --active-color:#17c349e3;
       --dropdownbg-color:#e7ebec;
-      --border-color:#e3e3e3;
+      --border-color: #ccc;
       --copy-color:#c2c2c2;
     }
 
@@ -60,12 +60,31 @@ body {
   padding: 30px;
   }   
  }
-    
- @media only screen and (min-width: 769px) {
-  .postcode {
-  width:50%;
-  }   
- }
+      .abefilm-container {
+            display: flex;
+            gap: 10px; /* Adds space between divs */
+        }
+
+        .abefilm-box {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+        }
+        
+    iframe{
+      width:100%;
+      height:100%;
+      border:0;
+     
+    }
+    iframe {
+    overflow: hidden; /* Hides the scrollbar */
+    scrollbar-width: none; /* Hides scrollbar in Firefox */
+}
+
+iframe::-webkit-scrollbar {
+    display: none; /* Hides scrollbar in Chrome, Safari */
+}
 
         
 .toggle-container {
@@ -99,7 +118,7 @@ select {
   color: var(--text-dark);
   margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .myinputs {
@@ -111,10 +130,10 @@ input[type="text"], textarea {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
-  border-radius: 5px;
+  border-radius: 3px;
   border: 1px solid transparent;
   background-clip: padding-box;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border:solid 1px #ccc;
   box-sizing: border-box;
   color: var(--text-dark);
   background-color: var(--placeholder-bg);
@@ -128,24 +147,11 @@ textarea {
   display: block;
 }
 
-textarea:hover, input[type="text"]:hover {
-  animation: borderRotate 2s linear infinite;
-  border-image-source: linear-gradient(90deg, transparent, #ff0000, transparent);
-  border-image-slice: 1;
-}
-
-@keyframes borderRotate {
-  0% { border-image-source: linear-gradient(90deg, transparent, #ff009670, transparent); }
-  25% { border-image-source: linear-gradient(180deg, transparent, #00ff0076, transparent); }
-  50% { border-image-source: linear-gradient(270deg, transparent, #00a8ff7d, transparent); }
-  75% { border-image-source: linear-gradient(360deg, transparent, #ffff0082, transparent); }
-  100% { border-image-source: linear-gradient(90deg, transparent, #ff0000, transparent); }
-}
 
 #copyBtn, #generateBtn, .removeBtn, #copyBtn3, #generateBtn3, #addEpisodeBtn, #removeTableBtn {
   display: block;
   margin: 15px auto;
-  border-radius: 8px;
+  border-radius: 5px;
   padding: 10px 20px;
   background-color: var(--placeholder-bg);
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
@@ -235,7 +241,7 @@ body.dark-mode ::placeholder {
   font-size: 14px;
   cursor: pointer;
   padding: 5px 10px;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .dropdown-content {
@@ -245,7 +251,7 @@ body.dark-mode ::placeholder {
   color: var(--theme-color);
   min-width: 160px;
   margin: 10px 0 0 20px;
-  border-radius: 8px;
+  border-radius: 5px;
   z-index: 1;
 }
 
@@ -272,13 +278,10 @@ body.dark-mode ::placeholder {
 </head>
 <body>
 
-   <div class="toggle-container">
-    <button id="toggleMode" class="toggle-switch" onclick="toggleDarkMode()">Light/Dark</button>
-    <i id="light-icon" class="fas fa-sun" style="display: none;"></i>
-    <i id="dark-icon" class="fas fa-moon"></i>
-</div>
-
-    <div class="postcode">
+  
+ <div class="abefilm-container">
+        <div class="abefilm-box">
+           <div class="postcode">
    <div class="dropdown">
   <button onclick="toggleDropdown()" class="dropbtn" id="dropdownTitle"><i class="fas fa-tv">Series Code </i>
 </button>
@@ -351,6 +354,11 @@ body.dark-mode ::placeholder {
 </div>
 </div>
     </div>
+        </div>
+        <div class="abefilm-box">
+ <iframe src="https://chaeunwoosshi.github.io/image-resizer/"></iframe>
+    </div>
+   
     <script>
     
  const lightIcon = document.getElementById("dark-icon");
