@@ -26,7 +26,7 @@
   .container {
     width: 100%;
     max-width: 900px;
-    padding: 10px;
+    padding: 5px 15px;
     box-sizing: border-box;
   }
 
@@ -145,7 +145,54 @@
 
 <body>
   <div class="container">
+    
     <h2><i class="bi bi-code-square"></i> Post Code Generator</h2>
+
+<!-- ⚙️ Settings Button -->
+<button id="tinySettingsBtn" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+  border: none;
+  background:transparent;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  z-index: 9999;
+  cursor: pointer;
+"><i class="bi bi-gear"></i></button>
+
+<!-- 🔧 Modal -->
+<div id="tinySettingsModal" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9998;
+  align-items: center;
+  justify-content: center;
+">
+  <div style="
+    background: #222;
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+  ">
+    <h3>TinyURL Settings</h3>
+    <label style="display: block; margin: 10px 0;">
+      <input type="checkbox" id="tinyEnable"> Enable TinyURL
+    </label>
+    <input type="text" id="tinyApiKey" placeholder="Enter TinyURL API Token" style="width: 100%; padding: 8px;">
+    <button id="tinyCloseBtn" style="margin-top: 15px; padding: 8px 12px;">Close</button>
+  </div>
+</div>
+
+
 
     <!-- Tab Buttons -->
     <div class="tab-buttons">
@@ -248,10 +295,11 @@ function switchTab(tab) {
 }
 
 
-function generateMovieCode() {
+async function generateMovieCode() {
   const postID = document.getElementById("moviePostID").value.trim();
   const image = document.getElementById("movieImageLink").value.trim();
-  const iframe = document.getElementById("movieIframeLink").value.trim();
+ const iframeOriginal = document.getElementById("movieIframeLink").value.trim();
+const iframe = await shortenURL(iframeOriginal);
   const synopsis = document.getElementById("movieSynopsis").value.trim();
   const casts = document.getElementById("movieCasts").value.trim();
   const director = document.getElementById("movieDirector").value.trim();
@@ -268,18 +316,32 @@ function generateMovieCode() {
 
   let infoHTML = "";
 
-  if (showSynopsis && synopsis) infoHTML += `<p id="synopsis">${synopsis}</p>\n`;
-  if (showCasts && casts) infoHTML += `<p><strong>Casts:</strong> ${casts}</p>\n`;
-  if (showDirector && director) infoHTML += `<p><strong>Director:</strong> ${director}</p>\n`;
-  if (showRelease && release) infoHTML += `<p><strong>Release:</strong> ${release}</p>\n`;
-  if (showCountry && country) infoHTML += `<p><strong>Country:</strong> ${country}</p>\n`;
-  if (showDownload && download) infoHTML += `<p><a href="${download}" target="_blank">📥 Download</a></p>\n`;
+if (showSynopsis && synopsis) infoHTML += `<p id="synopsis">${synopsis}</p>\n`;
+
+let tableRows = "";
+
+if (showCasts && casts) tableRows += `<tr><td>Casts:</td><td>${casts}</td></tr>\n`;
+if (showDirector && director) tableRows += `<tr><td>Director:</td><td>${director}</td></tr>\n`;
+if (showRelease && release) tableRows += `<tr><td>Release:</td><td>${release}</td></tr>\n`;
+if (showCountry && country) tableRows += `<tr><td>Country:</td><td>${country}</td></tr>\n`;
+
+if (tableRows) {
+  infoHTML += `<table class="blueTable">\n<tbody>\n${tableRows}</tbody>\n</table>\n`;
+}
+
+if (showDownload && download) {
+  infoHTML += `<p><a href="${download}" target="_blank">📥 Download</a></p>\n`;
+}
+
 
   const code = `
 <html>
-<iframe class="lazyload" data-src="${iframe}" src="${iframe}" frameborder="0" allowfullscreen></iframe>
+<iframe id="fullscreen-Button" class="lazyload" data-src="${iframe}" src="${iframe}" frameborder="0" allowfullscreen></iframe>
 <img alt="poster" src="${image}"/>
 ${infoHTML}
+
+<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>
+
 <span id="post-id" data-post-id="${postID}" style="display:none;"></span>
 </html>
   `.trim();
@@ -322,7 +384,7 @@ function renumberEpisodes() {
   });
 }
 
-function generateSeriesCode() {
+async function generateSeriesCode() {
   const postID = document.getElementById("seriesPostID").value.trim();
   const image = document.getElementById("seriesImageLink").value.trim();
   const synopsis = document.getElementById("seriesSynopsis").value.trim();
@@ -331,32 +393,45 @@ function generateSeriesCode() {
   const release = document.getElementById("seriesRelease").value.trim();
   const country = document.getElementById("seriesCountry").value.trim();
 
-  let episodesHTML = "";
-  const inputs = document.querySelectorAll(".episodeLink");
-  inputs.forEach((input, index) => {
+  const showSynopsis = document.getElementById("seriesShowSynopsis").checked;
+  const showCasts = document.getElementById("seriesShowCasts").checked;
+  const showDirector = document.getElementById("seriesShowDirector").checked;
+  const showRelease = document.getElementById("seriesShowRelease").checked;
+  const showCountry = document.getElementById("seriesShowCountry").checked;
+
+  let infoHTML = "";
+
+  if (showSynopsis && synopsis) infoHTML += `<p id="synopsis">${synopsis}</p>\n`;
+
+  let tableRows = "";
+  if (showCasts && casts) tableRows += `<tr><td>Casts:</td><td>${casts}</td></tr>\n`;
+  if (showDirector && director) tableRows += `<tr><td>Director:</td><td>${director}</td></tr>\n`;
+  if (showRelease && release) tableRows += `<tr><td>Release:</td><td>${release}</td></tr>\n`;
+  if (showCountry && country) tableRows += `<tr><td>Country:</td><td>${country}</td></tr>\n`;
+
+  if (tableRows) {
+    infoHTML += `<table class="blueTable">\n<tbody>\n${tableRows}</tbody>\n</table>\n`;
+  }
+
+  // Generate episode list
+  const episodeLinks = document.querySelectorAll(".episodeLink");
+  let episodeHTML = "";
+  episodeLinks.forEach((input, index) => {
     const link = input.value.trim();
-    const num = index + 1;
+    const epNum = index + 1;
     if (link) {
-      episodesHTML += `<a href="" class="epi" data-src="${link}">${num}</a>\n`;
+      episodeHTML += `<a href="" data-src="${link}">${epNum}</a>\n`;
     }
   });
 
-  let code = `
+  const code = `
 <html>
-<iframe class="lazyload" data-src="${image}" src="${image}" frameborder="0" allowfullscreen></iframe>
 <img alt="poster" src="${image}"/>
-<p id="synopsis">${synopsis}</p>
-<table class="blueTable">
-<tbody>
-<tr><td>Casts:</td><td>${casts}</td></tr>
-<tr><td>Director:</td><td>${director}</td></tr>
-<tr><td>Release:</td><td>${release}</td></tr>
-<tr><td>Country:</td><td>${country}</td></tr>
-</tbody>
-</table>
-<div id="episodeList">
-${episodesHTML}
+${infoHTML}
+<div class="episode-list">
+${episodeHTML}
 </div>
+
 <span id="post-id" data-post-id="${postID}" style="display:none;"></span>
 </html>
   `.trim();
@@ -370,6 +445,99 @@ function copyCode() {
     alert("Code copied to clipboard!");
   });
 }
+</script>
+
+<script>
+  async function shortenURL(longUrl) {
+  const token = document.getElementById("tinyApiKey").value.trim();
+
+  if (!token) {
+    console.warn("TinyURL API token not provided, skipping URL shortening.");
+    return longUrl;
+  }
+
+  try {
+    const response = await fetch("https://api.tinyurl.com/create", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        url: longUrl,
+        domain: "tinyurl.com"
+      })
+    });
+
+    const data = await response.json();
+    if (data?.data?.tiny_url) {
+      return data.data.tiny_url;
+    } else {
+      console.warn("TinyURL API error:", data);
+      return longUrl;
+    }
+  } catch (err) {
+    console.error("Error shortening URL:", err);
+    return longUrl;
+  }
+}
+
+</script>
+
+<script>
+  const settingsBtn = document.getElementById("tinySettingsBtn");
+  const modal = document.getElementById("tinySettingsModal");
+  const closeBtn = document.getElementById("tinyCloseBtn");
+  const enableCheckbox = document.getElementById("tinyEnable");
+  const apiKeyInput = document.getElementById("tinyApiKey");
+
+  // Load saved settings
+  document.addEventListener("DOMContentLoaded", () => {
+    enableCheckbox.checked = localStorage.getItem("tinyEnabled") === "true";
+    apiKeyInput.value = localStorage.getItem("tinyApiKey") || "";
+  });
+
+  // Toggle modal
+  settingsBtn.onclick = () => modal.style.display = "flex";
+  closeBtn.onclick = () => modal.style.display = "none";
+  window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+  // Save settings on change
+  enableCheckbox.onchange = () => {
+    localStorage.setItem("tinyEnabled", enableCheckbox.checked);
+  };
+
+  apiKeyInput.oninput = () => {
+    localStorage.setItem("tinyApiKey", apiKeyInput.value.trim());
+  };
+
+  // Shorten URL function
+  async function shortenURL(longUrl) {
+    const enabled = localStorage.getItem("tinyEnabled") === "true";
+    const token = localStorage.getItem("tinyApiKey");
+
+    if (!enabled || !token) return longUrl;
+
+    try {
+      const response = await fetch("https://api.tinyurl.com/create", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          url: longUrl,
+          domain: "tinyurl.com"
+        })
+      });
+
+      const data = await response.json();
+      return data?.data?.tiny_url || longUrl;
+    } catch (err) {
+      console.error("TinyURL error:", err);
+      return longUrl;
+    }
+  }
 </script>
 
 </body>
