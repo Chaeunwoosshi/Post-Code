@@ -330,7 +330,8 @@ if (tableRows) {
 }
 
 if (showDownload && download) {
-  infoHTML += `<p><a href="${download}" target="_blank">📥 Download</a></p>\n`;
+  infoHTML += `<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>\n`;
+  infoHTML += `<a href="${download}">Download Here</a>\n`;
 }
 
 
@@ -340,11 +341,10 @@ if (showDownload && download) {
 <img alt="poster" src="${image}"/>
 ${infoHTML}
 
-<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>
-
 <span id="post-id" data-post-id="${postID}" style="display:none;"></span>
 </html>
-  `.trim();
+`.trim();
+
 
   document.getElementById("output").textContent = code;
 }
@@ -386,7 +386,7 @@ function renumberEpisodes() {
 
 async function generateSeriesCode() {
   const postID = document.getElementById("seriesPostID").value.trim();
-  const image = document.getElementById("seriesImageLink").value.trim();
+  const image = document.getElementById("seriesImageLink").value.trim(); 
   const synopsis = document.getElementById("seriesSynopsis").value.trim();
   const casts = document.getElementById("seriesCasts").value.trim();
   const director = document.getElementById("seriesDirector").value.trim();
@@ -413,31 +413,34 @@ async function generateSeriesCode() {
     infoHTML += `<table class="blueTable">\n<tbody>\n${tableRows}</tbody>\n</table>\n`;
   }
 
-  // Generate episode list
-  const episodeLinks = document.querySelectorAll(".episodeLink");
-  let episodeHTML = "";
+  // Extract episode links and create anchor tags for each
+  const episodeLinks = document.querySelectorAll("#seriesEpisodes input.episodeLink");
+  let episodesHTML = "";
   episodeLinks.forEach((input, index) => {
-    const link = input.value.trim();
-    const epNum = index + 1;
-    if (link) {
-      episodeHTML += `<a href="" data-src="${link}">${epNum}</a>\n`;
+    const episodeURL = input.value.trim();
+    if (episodeURL) {
+      const episodeNumber = index + 1;
+      episodesHTML += `<a href="" class="epi" data-src="${episodeURL}">${episodeNumber}</a><br>\n`;
     }
   });
 
-  const code = `
+  // Add episodes to the generated code
+  let code = `
 <html>
 <img alt="poster" src="${image}"/>
+<iframe id="series" class="lazyload" data-src="/" src="/" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
 ${infoHTML}
-<div class="episode-list">
-${episodeHTML}
+<div class="episodes">
+  ${episodesHTML}
 </div>
-
 <span id="post-id" data-post-id="${postID}" style="display:none;"></span>
 </html>
   `.trim();
 
   document.getElementById("output").textContent = code;
 }
+
+
 
 function copyCode() {
   const code = document.getElementById("output").textContent;
