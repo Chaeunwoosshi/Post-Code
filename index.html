@@ -1,1 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Post Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #eee;
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    input[type="text"], textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      background: #222;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    pre {
+      background: #222;
+      padding: 12px;
+      white-space: pre-wrap;
+      border-radius: 5px;
+      margin-top: 20px;
+      font-size: 14px;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 300px;
+    }
+
+    pre::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+      background-color: #444;
+      border-radius: 10px;
+    }
+
+    pre::-webkit-scrollbar-track {
+      background: #222;
+    }
+
+    label input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    #episodeContainer {
+  display: block;
+}
+
+    .tab-buttons {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .tab-buttons button {
+      background-color: #444;
+      color: #fff;
+      padding: 10px;
+      margin-right: 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .tab-buttons button.active {
+      background-color: #007bff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 40px;
+      }
+
+      input[type="text"], textarea, button, pre {
+        font-size: 18px;
+      }
+
+      button {
+        padding: 14px;
+      }
+
+      h2 {
+        font-size: 28px;
+      }
+
+      label {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>🎬 Post Code Generator</h2>
+
+    <!-- Tab Buttons -->
+    <div class="tab-buttons">
+      <button id="movieTab" class="active" onclick="switchTab('movie')">Movie</button>
+      <button id="seriesTab" onclick="switchTab('series')">Series</button>
+    </div>
+
+    <!-- Movie Tab Content -->
+    <div id="movieTabContent" class="tab-content active">
+      <label>Post ID:</label>
+      <input type="text" id="moviePostID" placeholder="Enter Post ID" />
+
+      <label>Image Link:</label>
+      <input type="text" id="movieImageLink" placeholder="https://example.com/image.jpg" />
+
+      <label>Iframe Video Link:</label>
+      <input type="text" id="movieIframeLink" placeholder="https://example.com/embed/xyz123" />
+
+      <label><input type="checkbox" id="movieShowSynopsis" checked> Show Synopsis:</label>
+      <textarea id="movieSynopsis" rows="3" placeholder="Enter synopsis here..."></textarea>
+
+      <label><input type="checkbox" id="movieShowCasts" checked> Show Casts:</label>
+      <input type="text" id="movieCasts" placeholder="Actor 1, Actor 2" />
+
+      <label><input type="checkbox" id="movieShowDirector" checked> Show Director:</label>
+      <input type="text" id="movieDirector" placeholder="Director Name" />
+
+      <label><input type="checkbox" id="movieShowRelease" checked> Show Release Date:</label>
+      <input type="text" id="movieRelease" placeholder="2025" />
+
+      <label><input type="checkbox" id="movieShowCountry" checked> Show Country:</label>
+      <input type="text" id="movieCountry" placeholder="USA, Korea, etc." />
+
+      <label><input type="checkbox" id="movieShowDownload" checked> Show Download Link:</label>
+      <input type="text" id="movieDownloadLink" placeholder="https://example.com/download" />
+
+      <button onclick="generateMovieCode()">Generate Movie Code</button>
+    </div>
+
+    <!-- Series Tab Content -->
+    <div id="seriesTabContent" class="tab-content">
+      <label>Post ID:</label>
+      <input type="text" id="seriesPostID" placeholder="Enter Post ID" />
+
+      <label>Series Image Link:</label>
+      <input type="text" id="seriesImageLink" placeholder="https://example.com/image.jpg" />
+
+      <label><input type="checkbox" id="seriesShowSynopsis" checked> Show Synopsis:</label>
+      <textarea id="seriesSynopsis" rows="3" placeholder="Enter synopsis here..."></textarea>
+
+      <label><input type="checkbox" id="seriesShowCasts" checked> Show Casts:</label>
+      <input type="text" id="seriesCasts" placeholder="Actor 1, Actor 2" />
+
+      <label><input type="checkbox" id="seriesShowDirector" checked> Show Director:</label>
+      <input type="text" id="seriesDirector" placeholder="Director Name" />
+
+      <label><input type="checkbox" id="seriesShowRelease" checked> Show Release Date:</label>
+      <input type="text" id="seriesRelease" placeholder="2025" />
+
+      <label><input type="checkbox" id="seriesShowCountry" checked> Show Country:</label>
+      <input type="text" id="seriesCountry" placeholder="China, etc." />
+
+     
+
+      <div id="episodeContainer">
+        <label>Episodes:</label>
+        <div id="seriesEpisodes">
+          <!-- Default Episode 1 -->
+          <div>
+            <input type="text" class="episodeLink" placeholder="Episode 1 URL" />
+          </div>
+        </div>
+        <button type="button" onclick="addSeriesEpisode()">Add Episode</button>
+      </div>
+
+      <button onclick="generateSeriesCode()">Generate Series Code</button>
+    </div>
+
+    <h3>🔧 Generated Code:</h3>
+    <pre id="output"></pre>
+    <button onclick="copyCode()" style="background:#007bff; margin-top: 10px;">Copy Code</button>
+  </div>
+
+  <script>
+let episodeCount = 1;
+
+function switchTab(tab) {
+  document.getElementById("movieTab").classList.remove("active");
+  document.getElementById("seriesTab").classList.remove("active");
+  document.getElementById("movieTabContent").classList.remove("active");
+  document.getElementById("seriesTabContent").classList.remove("active");
+
+  if (tab === 'movie') {
+    document.getElementById("movieTab").classList.add("active");
+    document.getElementById("movieTabContent").classList.add("active");
+  } else {
+    document.getElementById("seriesTab").classList.add("active");
+    document.getElementById("seriesTabContent").classList.add("active");
+  }
+}
+
+function addSeriesEpisode() {
+  const container = document.getElementById("seriesEpisodes");
+  const episodeDiv = document.createElement("div");
+
+  const epInput = document.createElement("input");
+  epInput.type = "text";
+  epInput.className = "episodeLink";
+  epInput.placeholder = "Episode URL";
+
+  const removeBtn = document.createElement("button");
+  removeBtn.textContent = "Remove";
+  removeBtn.onclick = () => {
+    container.removeChild(episodeDiv);
+    renumberEpisodes();
+  };
+
+  episodeDiv.appendChild(epInput);
+  episodeDiv.appendChild(removeBtn);
+  container.appendChild(episodeDiv);
+
+  renumberEpisodes();
+}
+
+function renumberEpisodes() {
+  const episodes = document.querySelectorAll("#seriesEpisodes > div");
+  episodes.forEach((div, i) => {
+    const input = div.querySelector("input.episodeLink");
+    const num = i + 1;
+    input.setAttribute("data-ep-number", num);
+    input.setAttribute("placeholder", "Episode " + num + " URL");
+  });
+}
+
+function generateSeriesCode() {
+  const postID = document.getElementById("seriesPostID").value.trim();
+  const image = document.getElementById("seriesImageLink").value.trim();
+  const synopsis = document.getElementById("seriesSynopsis").value.trim();
+  const casts = document.getElementById("seriesCasts").value.trim();
+  const director = document.getElementById("seriesDirector").value.trim();
+  const release = document.getElementById("seriesRelease").value.trim();
+  const country = document.getElementById("seriesCountry").value.trim();
+
+  let episodesHTML = "";
+  const inputs = document.querySelectorAll(".episodeLink");
+  inputs.forEach((input, index) => {
+    const link = input.value.trim();
+    const num = index + 1;
+    if (link) {
+      episodesHTML += `<a href="" class="epi" data-src="${link}">${num}</a>\n`;
+    }
+  });
+
+  let code = `
+<html>
+<iframe class="lazyload" data-src="${image}" src="${image}" frameborder="0" allowfullscreen></iframe>
+<img alt="poster" src="${image}"/>
+<p id="synopsis">${synopsis}</p>
+<table class="blueTable">
+<tbody>
+<tr><td>Casts:</td><td>${casts}</td></tr>
+<tr><td>Director:</td><td>${director}</td></tr>
+<tr><td>Release:</td><td>${release}</td></tr>
+<tr><td>Country:</td><td>${country}</td></tr>
+</tbody>
+</table>
+<div id="episodeList">
+${episodesHTML}
+</div>
+<span id="post-id" data-post-id="${postID}" style="display:none;"></span>
+</html>
+  `.trim();
+
+  document.getElementById("output").textContent = code;
+}
+
+function copyCode() {
+  const code = document.getElementById("output").textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    alert("Code copied to clipboard!");
+  });
+}
+</script>
+
+</body>
+</html>
 
