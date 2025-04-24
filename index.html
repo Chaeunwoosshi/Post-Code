@@ -340,11 +340,13 @@ if (tableRows) {
   infoHTML += `<table class="blueTable">\n<tbody>\n${tableRows}</tbody>\n</table>\n`;
 }
 
-if (showDownload && download) {
-  infoHTML += `<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>\n`;
-  infoHTML += `<a href="${download}">Download Here</a>\n`;
-}
+// Always include "Watch Now"
+infoHTML += `<a class="watchbtn" href="javascript:void(0);" id="fullscreenButton">Watch Now</a>\n`;
 
+
+ if (showDownload && download) {
+  infoHTML += `<a class="download" href="${download}" target="_blank">Download Here</a>\n`;
+}
 
   const code = `
 <html>
