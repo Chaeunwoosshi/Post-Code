@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -239,6 +238,48 @@ function switchTab(tab) {
     document.getElementById("seriesTabContent").classList.add("active");
   }
 }
+
+
+function generateMovieCode() {
+  const postID = document.getElementById("moviePostID").value.trim();
+  const image = document.getElementById("movieImageLink").value.trim();
+  const iframe = document.getElementById("movieIframeLink").value.trim();
+  const synopsis = document.getElementById("movieSynopsis").value.trim();
+  const casts = document.getElementById("movieCasts").value.trim();
+  const director = document.getElementById("movieDirector").value.trim();
+  const release = document.getElementById("movieRelease").value.trim();
+  const country = document.getElementById("movieCountry").value.trim();
+  const download = document.getElementById("movieDownloadLink").value.trim();
+
+  const showSynopsis = document.getElementById("movieShowSynopsis").checked;
+  const showCasts = document.getElementById("movieShowCasts").checked;
+  const showDirector = document.getElementById("movieShowDirector").checked;
+  const showRelease = document.getElementById("movieShowRelease").checked;
+  const showCountry = document.getElementById("movieShowCountry").checked;
+  const showDownload = document.getElementById("movieShowDownload").checked;
+
+  let infoHTML = "";
+
+  if (showSynopsis && synopsis) infoHTML += `<p id="synopsis">${synopsis}</p>\n`;
+  if (showCasts && casts) infoHTML += `<p><strong>Casts:</strong> ${casts}</p>\n`;
+  if (showDirector && director) infoHTML += `<p><strong>Director:</strong> ${director}</p>\n`;
+  if (showRelease && release) infoHTML += `<p><strong>Release:</strong> ${release}</p>\n`;
+  if (showCountry && country) infoHTML += `<p><strong>Country:</strong> ${country}</p>\n`;
+  if (showDownload && download) infoHTML += `<p><a href="${download}" target="_blank">📥 Download</a></p>\n`;
+
+  const code = `
+<html>
+<iframe class="lazyload" data-src="${iframe}" src="${iframe}" frameborder="0" allowfullscreen></iframe>
+<img alt="poster" src="${image}"/>
+${infoHTML}
+<span id="post-id" data-post-id="${postID}" style="display:none;"></span>
+</html>
+  `.trim();
+
+  document.getElementById("output").textContent = code;
+}
+
+
 
 function addSeriesEpisode() {
   const container = document.getElementById("seriesEpisodes");
